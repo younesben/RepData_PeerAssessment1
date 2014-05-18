@@ -16,7 +16,8 @@ dataTable$date <- as.Date(as.character(dataTable$date))
 ```r
 totalStepsPerDay <- aggregate(dataTable$steps, list(date = dataTable$date), 
     sum, na.rm = TRUE)
-barplot(totalStepsPerDay$x, space = 0, axes = TRUE, names.arg = totalStepsPerDay$date)
+barplot(totalStepsPerDay$x, space = 0, axes = TRUE, names.arg = totalStepsPerDay$date, 
+    xlab = "date", ylab = "total number of steps")
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
@@ -48,7 +49,7 @@ medianTotalStepsPerDay
 totalStepsPerInterval <- aggregate(dataTable$steps, list(interval = dataTable$interval), 
     mean, na.rm = TRUE)
 with(totalStepsPerInterval, plot(1:dim(totalStepsPerInterval)[1], x, type = "l", 
-    ylab = "Mean number of steps by interval", axes = FALSE))
+    xlab = "interval", ylab = "Mean number of steps by interval", axes = FALSE))
 with(totalStepsPerInterval, axis(2))
 with(totalStepsPerInterval, axis(1, at = seq(1, dim(totalStepsPerInterval)[1], 
     12), lab = subset(interval, interval%%100 == 0)))
@@ -90,9 +91,8 @@ for (i in 1:length(dataTable$steps)) {
 
 totalStepsPerDay2 <- aggregate(dataTable2$steps, list(date = dataTable2$date), 
     sum, na.rm = FALSE)
-par(mfrow = c(2, 1))
-barplot(totalStepsPerDay$x, space = 0, axes = TRUE, names.arg = totalStepsPerDay$date)
-barplot(totalStepsPerDay2$x, space = 0, axes = TRUE, names.arg = totalStepsPerDay2$date)
+barplot(totalStepsPerDay2$x, space = 0, axes = TRUE, names.arg = totalStepsPerDay2$date, 
+    xlab = "date", ylab = "total number of steps")
 ```
 
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
@@ -121,16 +121,21 @@ The mean and the median are slightly affected by the filling of th missing value
 
 At first sight, one could thing that filling missing values might introduce bias to the dataset by over estimating the number of steps. In reality, the datast is already distorted by under estimating the real values because of the missing values. In the author opinion there is more benefit than loss from filling the missing values. We could think that the figures are still underestimated, as the strategy we used to fill the missing values is based on the mean calculated with missing values i.e. it is understimated.
 
+There exists advanced and sophisticated statistical technics to recover missing values called data recovery methods (interpolation etc.).
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```r
-for (i in 1:length(dataTable2$steps)) {
-    # My R is in french : dimanche = sunday, samdi = saturday.
-    if (weekdays(dataTable2$date)[i] == "dimanche" | weekdays(dataTable2$date)[i] == 
+
+dataTable2$dayType <- factor(1:dim(dataTable2)[1], levels = c("weekend", "weekday"))
+
+for (i in 1:dim(dataTable2)[1]) {
+    # My R is in french : dimanche = sunday, samedi = saturday.
+    if (weekdays(dataTable2$date[i]) == "dimanche" | weekdays(dataTable2$date[i]) == 
         "samedi") {
-        dataTable2$dayType[i] <- as.factor("weekend")
+        dataTable2$dayType[i] <- as.character("weekend")
     } else {
-        dataTable2$dayType[i] <- as.factor("weekday")
+        dataTable2$dayType[i] <- levels(dataTable2$dayType)[2]
     }
 }
 stepsPerIntervalPerDayType <- aggregate(dataTable2$steps, list(interval = dataTable2$interval, 
