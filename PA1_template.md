@@ -136,12 +136,12 @@ for (i in 1:length(dataTable2$steps)) {
 stepsPerIntervalPerDayType <- aggregate(dataTable2$steps, list(interval = dataTable2$interval, 
     dayType = dataTable2$dayType), mean)
 
+library(lattice)
+
 xyplot(x ~ interval | dayType, data = stepsPerIntervalPerDayType, type = "l", 
-    layout = c(1, 2))
+    layout = c(1, 2), ylab = "Number of steps")
 ```
 
-```
-## Error: impossible de trouver la fonction "xyplot"
-```
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
 
 
